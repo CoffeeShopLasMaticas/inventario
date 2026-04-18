@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Las Máticas · Inventario</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --v:#1C4A2A;--vm:#2E7D4F;--vc:#52A875;--cr:#F5EFE6;--c2:#EDE3D5;
+  --vn:#8B1A3A;--do:#C4943A;--ro:#C0392B;--am:#E67E22;--bl:#FDFAF6;--gr:#8A8A8A;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cr);color:var(--v);min-height:100vh;}
+header{background:var(--cr);border-bottom:2px solid var(--c2);padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.07);}
+.logo{width:46px;height:46px;border-radius:50%;background:var(--vm);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.ht h1{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:900;color:var(--vn);}
+.ht p{font-size:.62rem;color:var(--gr);text-transform:uppercase;letter-spacing:.4px;}
+.ver{margin-left:auto;background:var(--vm);color:var(--cr);padding:3px 9px;border-radius:20px;font-size:.58rem;font-weight:700;}
+.tabs{display:flex;background:var(--v);overflow-x:auto;}
+.tab{flex:1;min-width:62px;padding:9px 3px;background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px;border-bottom:3px solid transparent;transition:.15s;position:relative;}
+.tab .ic{font-size:.9rem;}
+.tab.active{color:var(--do);border-bottom-color:var(--do);}
+.badge-tab{position:absolute;top:3px;right:6px;background:var(--ro);color:#fff;border-radius:10px;font-size:.52rem;font-weight:700;padding:1px 4px;min-width:15px;text-align:center;}
+.ct{padding:14px 12px 100px;max-width:960px;margin:0 auto;}
+.pn{display:none;}.pn.active{display:block;}
+.card{background:var(--bl);border-radius:16px;box-shadow:0 4px 20px rgba(28,74,42,.11);padding:16px;margin-bottom:14px;border:1.5px solid rgba(28,74,42,.07);}
+.card h2{font-family:'Playfair Display',serif;font-size:.94rem;font-weight:700;color:var(--v);margin-bottom:12px;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:480px){.fg{grid-template-columns:1fr;}}
+.fg label{font-size:.67rem;font-weight:600;color:var(--vm);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:3px;}
+.fg input,.fg select,.fg textarea{border:1.5px solid var(--c2);border-radius:10px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:.84rem;background:var(--cr);color:var(--v);outline:none;width:100%;transition:.15s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--vc);background:#fff;}
+.fg textarea{resize:vertical;min-height:70px;}
+.full{grid-column:1/-1;}
+.btn{padding:9px 16px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;border:none;transition:.15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-g{background:var(--v);color:var(--cr);}.btn-g:hover{background:var(--vm);}
+.btn-r{background:var(--ro);color:#fff;}
+.btn-wa{background:#25D366;color:#fff;}
+.btn-a{background:var(--am);color:#fff;}
+.btn-outline{background:transparent;color:var(--v);border:1.5px solid var(--c2);}
+.btn-sm{padding:5px 9px;font-size:.71rem;border-radius:8px;}
+.tw{overflow-x:auto;border-radius:10px;}
+table{width:100%;border-collapse:collapse;font-size:.79rem;}
+thead tr{background:var(--v);color:var(--cr);}
+thead th{padding:9px 10px;text-align:left;font-weight:600;white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--c2);}
+tbody td{padding:7px 10px;vertical-align:middle;}
+.bk{display:inline-block;padding:2px 7px;border-radius:20px;font-size:.65rem;font-weight:600;}
+.ok{background:#D5F5E3;color:#1E8449;}.bj{background:#FEF9E7;color:#E67E22;}.ag{background:#FADBD8;color:#C0392B;}
+.cl{display:inline-block;padding:2px 6px;border-radius:4px;font-size:.58rem;font-weight:700;text-transform:uppercase;}
+.c0{background:#3E2723;color:#fff;}.c1{background:#C4943A;color:#fff;}.c2b{background:#1A5276;color:#fff;}
+.c3{background:#6B3A2A;color:#fff;}.c4{background:#7D3C98;color:#fff;}.c5{background:#1E8449;color:#fff;}
+.c6{background:#555;color:#fff;}.c7{background:#8B1A3A;color:#fff;}.c8{background:#2C3E50;color:#fff;}.c9{background:#7F8C8D;color:#fff;}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.sc{background:var(--bl);border-radius:16px;padding:14px;text-align:center;box-shadow:0 4px 20px rgba(28,74,42,.11);}
+.sn{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;line-height:1;}
+.sl{font-size:.64rem;color:var(--gr);font-weight:500;margin-top:3px;text-transform:uppercase;}
+.alrt{padding:10px 13px;border-radius:9px;margin-bottom:10px;font-size:.8rem;font-weight:500;}
+.alrt-w{background:#FEF9E7;border:1.5px solid #F39C12;color:#7D6608;}
+.alrt-e{background:#FADBD8;border:1.5px solid #E74C3C;color:#922B21;}
+.alrt-s{background:#D5F5E3;border:1.5px solid #27AE60;color:#1E8449;}
+.alrt-i{background:#EBF5FB;border:1.5px solid #3498DB;color:#1A5276;}
+.sb{display:flex;gap:7px;margin-bottom:11px;}
+.sb input{flex:1;border:1.5px solid var(--c2);border-radius:10px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:.83rem;background:var(--bl);outline:none;color:var(--v);}
+.sb input:focus{border-color:var(--vc);}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px;}
+.chip{padding:4px 10px;border-radius:20px;cursor:pointer;font-size:.67rem;font-weight:600;border:1.5px solid var(--c2);background:var(--bl);color:var(--gr);}
+.chip.on{background:var(--v);color:var(--cr);border-color:var(--v);}
+#toast{position:fixed;bottom:78px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--v);color:var(--cr);padding:10px 20px;border-radius:30px;font-size:.82rem;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transition:.28s;z-index:999;white-space:nowrap;}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+.mg{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:9px;}
+.mi{background:var(--bl);border-radius:13px;padding:11px;border:1.5px solid var(--c2);transition:.15s;}
+.mi:hover{box-shadow:0 4px 16px rgba(28,74,42,.12);border-color:var(--vc);}
+.mi-c{font-size:.57rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.mi-n{font-size:.8rem;font-weight:600;color:var(--v);line-height:1.2;margin-bottom:5px;}
+.mi-p{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--vn);}
+.mbc{border-left:3px solid #C4943A;}.mbc .mi-c{color:#C4943A;}
+.mbf{border-left:3px solid #2E7D4F;}.mbf .mi-c{color:#2E7D4F;}
+.mos{border-left:3px solid #6B3A2A;}.mos .mi-c{color:#6B3A2A;}
+.mod{border-left:3px solid #8E44AD;}.mod .mi-c{color:#8E44AD;}
+.mcb{border-left:3px solid #1A5276;}.mcb .mi-c{color:#1A5276;}
+.mma{border-left:3px solid #8B1A3A;}.mma .mi-c{color:#8B1A3A;}
+.mad{border-left:3px solid #E67E22;}.mad .mi-c{color:#E67E22;}
+.ra{display:flex;gap:5px;}
+.sh{padding:8px 11px;font-size:.74rem;font-weight:700;color:#fff;letter-spacing:.4px;}
+.sep{background:#EDE3D5;padding:6px 11px;font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--v);}
+.rec-tag{display:inline-block;background:#EAF6EE;color:#1C4A2A;border-radius:6px;font-size:.58rem;font-weight:700;padding:1px 5px;margin-left:3px;vertical-align:middle;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px;}
+.modal-box{background:var(--bl);border-radius:20px;padding:22px;max-width:460px;width:100%;box-shadow:0 16px 40px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.08rem;font-weight:700;color:var(--v);margin-bottom:14px;}
+.modal-ing{background:var(--cr);border-radius:10px;padding:12px 14px;margin-bottom:14px;}
+.modal-ing-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--c2);font-size:.82rem;}
+.modal-ing-row:last-child{border-bottom:none;}
+.modal-ing-name{color:var(--v);font-weight:500;}
+.modal-ing-qty{color:var(--vm);font-weight:700;}
+.modal-ing-warn{color:var(--ro);font-size:.7rem;margin-left:5px;}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;}
+.warn-box{background:#FADBD8;border:1.5px solid #E74C3C;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:.78rem;color:#922B21;}
+.info-box{background:#EBF5FB;border:1.5px solid #3498DB;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:.78rem;color:#1A5276;}
+.resumen-dia{background:linear-gradient(135deg,#1C4A2A,#2E7D4F);border-radius:14px;padding:14px 16px;margin-bottom:14px;color:#fff;}
+.resumen-dia h3{font-family:'Playfair Display',serif;font-size:.93rem;font-weight:700;color:var(--do);margin-bottom:8px;}
+.resumen-cat{font-size:.74rem;opacity:.85;margin-top:4px;}
+/* Reporte */
+.rep-section{background:var(--bl);border-radius:14px;padding:16px;margin-bottom:14px;border:1.5px solid var(--c2);}
+.rep-section h3{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--v);margin-bottom:10px;}
+.stars{display:flex;gap:6px;margin-bottom:8px;}
+.star{font-size:1.5rem;cursor:pointer;transition:.15s;filter:grayscale(1);opacity:.5;}
+.star.on{filter:none;opacity:1;}
+.rep-preview{background:var(--v);border-radius:12px;padding:14px;color:#fff;font-size:.78rem;line-height:1.6;white-space:pre-wrap;font-family:monospace;margin-bottom:12px;}
+/* Descargar */
+.dl-card{background:var(--bl);border-radius:16px;padding:18px;margin-bottom:14px;border:1.5px solid var(--c2);}
+.dl-card h3{font-family:'Playfair Display',serif;font-size:.9rem;margin-bottom:12px;color:var(--v);}
+.dl-btns{display:flex;flex-wrap:wrap;gap:8px;}
+.dl-btn{background:var(--v);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;}
+.dl-btn:hover{background:var(--vm);}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">&#9749;</div>
+  <div class="ht"><h1>Las M&aacute;ticas Coffee Gallery</h1><p>Sistema de Inventario</p></div>
+  <div class="ver" id="verBadge"></div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" id="T-menu" onclick="showTab('menu')"><span class="ic">&#128203;</span>Men&uacute;</button>
+  <button class="tab" id="T-insumos" onclick="showTab('insumos')"><span class="ic">&#128722;</span>Insumos</button>
+  <button class="tab" id="T-entradas" onclick="showTab('entradas')"><span class="ic">&#128229;</span>Entradas</button>
+  <button class="tab" id="T-salidas" onclick="showTab('salidas')"><span class="ic">&#128228;</span>Salidas</button>
+  <button class="tab" id="T-stock" onclick="showTab('stock')"><span class="ic">&#128230;</span>Stock<span class="badge-tab" id="badge-stock"></span></button>
+  <button class="tab" id="T-reporte" onclick="showTab('reporte')"><span class="ic">&#128202;</span>Reporte</button>
+  <button class="tab" id="T-descargar" onclick="showTab('descargar')"><span class="ic">&#128190;</span>Descargar</button>
+</div>
+
+<div class="ct">
+
+<!-- MENU -->
+<div class="pn active" id="P-menu">
+  <div class="card"><h2>&#128203; Men&uacute; Las M&aacute;ticas</h2>
+    <div class="chips" id="chips-menu"></div>
+    <div class="sb"><input type="text" id="buscaMenu" placeholder="Buscar producto..." oninput="renderMenu()"></div>
+    <div class="mg" id="gridMenu"></div>
+  </div>
+</div>
+
+<!-- INSUMOS -->
+<div class="pn" id="P-insumos">
+  <div class="card"><h2>Agregar / Editar Insumo</h2>
+    <div class="fg">
+      <div><label>Nombre</label><input type="text" id="iNom" placeholder="Nombre del insumo"></div>
+      <div><label>Categor&iacute;a</label><select id="iCat">
+        <option value="Bebidas Calientes">Bebidas Calientes</option>
+        <option value="Bebidas Frias">Bebidas Fr&iacute;as</option>
+        <option value="Opciones Saladas">Opciones Saladas</option>
+        <option value="Opciones Dulces">Opciones Dulces</option>
+        <option value="Maticas / Accesorios">Maticas / Accesorios</option>
+        <option value="Adiciones">Adiciones</option>
+        <option value="Cafe Bolsa">Caf&eacute; Bolsa</option>
+        <option value="Desechables">Desechables</option>
+        <option value="Papeleria">Papelar&iacute;a</option>
+        <option value="Aseo">Aseo</option>
+      </select></div>
+      <div><label>Unidad</label><select id="iUni"><option value="gramos">Gramos</option><option value="ml">Mililitros</option><option value="unidad">Unidad</option><option value="paquete">Paquete</option><option value="porcion">Porci&oacute;n</option><option value="sobre">Sobre</option><option value="bolsita">Bolsita</option><option value="tajada">Tajada</option><option value="rollo">Rollo</option><option value="paquete">Paquete</option></select></div>
+      <div><label>Stock M&iacute;nimo</label><input type="number" id="iMin" min="0" step="1"></div>
+      <div><label>Stock Actual</label><input type="number" id="iSto" min="0" step="0.01"></div>
+      <div><label>Costo Unitario ($)</label><input type="number" id="iCos" min="0" step="0.01"></div>
+      <div><label>Proveedor</label><select id="iPro"></select></div>
+    </div><br>
+    <button class="btn btn-g" onclick="guardarInsumo()">Guardar</button>
+    <button class="btn btn-a" id="btnCancelar" style="margin-left:8px;display:none" onclick="cancelarEdicion()">Cancelar</button>
+  </div>
+  <div class="card"><h2>Productos de la Carta e Insumos</h2>
+    <div class="sb"><input type="text" id="buscaInsumos" placeholder="Buscar..." oninput="renderInsumos()"></div>
+    <div class="tw"><table>
+      <thead><tr><th>Categor&iacute;a</th><th>Nombre</th><th>Stock / Precio</th><th>Unidad</th><th>M&iacute;n.</th><th>Costo ($)</th><th></th></tr></thead>
+      <tbody id="tablaInsumos"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ENTRADAS -->
+<div class="pn" id="P-entradas">
+  <div class="card"><h2>&#128229; Registrar Entrada</h2>
+    <div class="fg">
+      <div><label>Insumo</label><select id="eIns"></select></div>
+      <div><label>Fecha</label><input type="date" id="eFec"></div>
+      <div><label>Cantidad</label><input type="number" id="eCan" min="0" step="0.01" placeholder="Ej: 500"></div>
+      <div><label>Costo Total ($)</label><input type="number" id="eCos" min="0" placeholder="Ej: 80000"></div>
+      <div><label>Proveedor</label><select id="ePro"></select></div>
+      <div><label>Responsable</label><select id="eRes"><option>Maria</option><option>Viviana</option><option>Liz</option><option>Otro</option></select></div>
+      <div class="full"><label>Nota</label><input type="text" id="eNot" placeholder="Opcional"></div>
+    </div><br>
+    <button class="btn btn-g" onclick="registrarEntrada()">Registrar Entrada</button>
+  </div>
+  <div class="card"><h2>Historial de Entradas</h2>
+    <div class="tw"><table><thead><tr><th>Fecha</th><th>Categor&iacute;a</th><th>Insumo</th><th>Cant.</th><th>Costo</th><th>Proveedor</th><th>Resp.</th><th>Nota</th></tr></thead>
+    <tbody id="tablaEntradas"></tbody></table></div>
+  </div>
+</div>
+
+<!-- SALIDAS -->
+<div class="pn" id="P-salidas">
+  <div class="resumen-dia" id="resumeDia" style="display:none">
+    <h3>&#128202; Ventas del d&iacute;a</h3>
+    <div id="resumeBody"></div>
+  </div>
+  <div class="card"><h2>&#128228; Registrar Salida</h2>
+    <p style="font-size:.77rem;color:#888;margin-bottom:12px">Productos con &#9733; descuentan insumos autom&aacute;ticamente al confirmar.</p>
+    <div class="fg">
+      <div class="full"><label>Producto o Insumo</label><select id="sItem"></select></div>
+      <div><label>Fecha</label><input type="date" id="sFec"></div>
+      <div><label>Cantidad</label><input type="number" id="sCan" min="1" step="1" value="1"></div>
+      <div><label>Motivo</label><select id="sMot">
+        <option value="Consumo en preparacion">Consumo en preparaci&oacute;n</option>
+        <option value="Merma / Desperdicio">Merma / Desperdicio</option>
+        <option value="Venta directa">Venta directa</option>
+        <option value="Devolucion">Devoluci&oacute;n</option>
+        <option value="Otro">Otro</option>
+      </select></div>
+      <div><label>Responsable</label><select id="sRes"><option>Maria</option><option>Viviana</option><option>Liz</option><option>Otro</option></select></div>
+      <div class="full"><label>Nota (opcional)</label><input type="text" id="sNot" placeholder="Ej: Mesa 3, cliente especial..."></div>
+    </div><br>
+    <button class="btn btn-r" onclick="prepararSalida()">Registrar Salida &rarr;</button>
+  </div>
+  <div class="card"><h2>Historial de Salidas</h2>
+    <div class="tw"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Producto / Insumo</th><th>Cant.</th><th>Motivo</th><th>Resp.</th><th>Desglose</th></tr></thead>
+    <tbody id="tablaSalidas"></tbody></table></div>
+  </div>
+</div>
+
+<!-- STOCK -->
+<div class="pn" id="P-stock">
+  <div class="sg" id="statsStock"></div>
+  <div id="alertasStock"></div>
+  <div class="card"><h2>&#128230; Stock Actual</h2>
+    <div class="chips" id="chips-stock"></div>
+    <div class="sb"><input type="text" id="buscaStock" placeholder="Buscar insumo..." oninput="renderStock()"></div>
+    <div class="tw"><table><thead><tr><th>Categor&iacute;a</th><th>Insumo</th><th>Unidad</th><th>Stock</th><th>M&iacute;n.</th><th>Estado</th><th>&Uacute;lt. entrada</th><th>Acci&oacute;n</th></tr></thead>
+    <tbody id="tablaStock"></tbody></table></div>
+  </div>
+</div>
+
+<!-- REPORTE -->
+<div class="pn" id="P-reporte">
+  <div class="rep-section">
+    <h3>&#128308; Agotados y Stock Bajo</h3>
+    <div id="repStock"></div>
+  </div>
+  <div class="rep-section">
+    <h3>&#128229; Entradas de Hoy</h3>
+    <div id="repEntradas"></div>
+  </div>
+  <div class="rep-section">
+    <h3>&#11088; Calificaci&oacute;n del Turno</h3>
+    <div class="stars" id="repStars"></div>
+    <div class="fg">
+      <div><label>Responsable</label><select id="repRes"><option>Maria</option><option>Viviana</option><option>Liz</option><option>Otro</option></select></div>
+      <div class="full"><label>Notas del turno</label><textarea id="repNotas" placeholder="Ej: Todo tranquilo, llegó proveedor, producto agotado..."></textarea></div>
+    </div>
+    <br>
+    <button class="btn btn-g" onclick="generarReporte()">Vista previa del reporte</button>
+  </div>
+  <div class="rep-section" id="repPreviewSection" style="display:none">
+    <h3>&#128241; Mensaje WhatsApp</h3>
+    <div class="rep-preview" id="repPreview"></div>
+    <button class="btn btn-wa" onclick="enviarWA()">&#128241; Abrir en WhatsApp</button>
+  </div>
+</div>
+
+<!-- DESCARGAR -->
+<div class="pn" id="P-descargar">
+  <div class="dl-card">
+    <h3>Per&iacute;odo de descarga</h3>
+    <div class="fg">
+      <div><label>Desde</label><input type="date" id="dlDesde"></div>
+      <div><label>Hasta</label><input type="date" id="dlHasta"></div>
+    </div>
+  </div>
+  <div class="dl-card">
+    <h3>&#128190; Descargar CSV</h3>
+    <div class="dl-btns">
+      <button class="dl-btn" onclick="descargarCSV('completo')">&#128230; Reporte Completo</button>
+      <button class="dl-btn" onclick="descargarCSV('entradas')">&#128229; Solo Entradas</button>
+      <button class="dl-btn" onclick="descargarCSV('salidas')">&#128228; Solo Salidas</button>
+      <button class="dl-btn" onclick="descargarCSV('stock')">&#128202; Stock Actual</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /ct -->
+
+<div id="toast"></div>
+<div id="modal-overlay" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title"></div>
+    <div id="modal-body"></div>
+    <div class="modal-btns">
+      <button class="btn btn-g" id="modal-confirm">Confirmar</button>
+      <button class="btn btn-outline" onclick="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var VER = "2026-04-18-v11";
+var editIdx = -1;
+var chipMenu = "Todos";
+var chipStock = "Todos";
+var modalCallback = null;
+var repCalificacion = 3;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function G(id){return document.getElementById(id);}
+function fmt(n){return(n!=null&&n!=="")?"$"+Number(n).toLocaleString("es-CO"):"--";}
+function fmtP(n){return"$"+Number(Math.round(n||0)).toLocaleString("es-CO");}
+function fN(n){return n!=null?Number(n).toLocaleString("es-CO"):"--";}
+function fNi(n){return Math.round(n!=null?n:0).toLocaleString("es-CO");}
+function hoy(){return new Date().toISOString().slice(0,10);}
+function toast(msg){var t=G("toast");t.textContent=msg;t.classList.add("on");setTimeout(function(){t.classList.remove("on");},2800);}
+function sBadge(s,m){if(s<=0)return'<span class="bk ag">Agotado</span>';if(s<m)return'<span class="bk bj">Bajo</span>';return'<span class="bk ok">OK</span>';}
+function cBadge(cat){var cl=CBDG[cat]||"c6";return'<span class="cl '+cl+'">'+cat+'</span>';}
+function LD(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function GD(k,v){localStorage.setItem(k,JSON.stringify(v));}
+
+var CBDG={
+  "Cafe Bolsa":"c0","Bebidas Calientes":"c1","Bebidas Frias":"c2b",
+  "Opciones Saladas":"c3","Opciones Dulces":"c4","Adiciones":"c5",
+  "Desechables":"c6","Maticas / Accesorios":"c7","Papeleria":"c8","Aseo":"c9"
+};
+var CORD=["Bebidas Calientes","Bebidas Frias","Opciones Saladas","Opciones Dulces","Maticas / Accesorios","Adiciones","Cafe Bolsa","Desechables","Papeleria","Aseo"];
+var CNOM={"Bebidas Calientes":"Bebidas Calientes","Bebidas Frias":"Bebidas Fr\u00edas","Opciones Saladas":"Opciones Saladas","Opciones Dulces":"Opciones Dulces","Maticas / Accesorios":"Maticas / Accesorios","Adiciones":"Adiciones","Cafe Bolsa":"Caf\u00e9 en Bolsa","Desechables":"Desechables","Papeleria":"Papelar\u00eda","Aseo":"Aseo"};
+var CMNU={"Bebidas Calientes":"mbc","Bebidas Frias":"mbf","Opciones Saladas":"mos","Opciones Dulces":"mod","Maticas / Accesorios":"mma","Cafe Bolsa":"mcb","Adiciones":"mad"};
+var PROVS=["1 Azul Compa\u00f1ia Cafe","Almendra Selecta","Surtipulpas","Pan Trigo y Arte","Congelados Hechizo","Multipan","Caseritas","Maritza Cortez","Desechables Belen","CI Agua de la Pe\u00f1a","Carulla","D1","BLACKMILL SAS","Karoma","Otro"];
+
+// ── INS_DEF ───────────────────────────────────────────────────────────────────
+var INS_DEF=[
+  {id:"CAF-001",cat:"Cafe Bolsa",n:"Cafe en grano",u:"gramos",min:500,s:4264,c:60,p:"1 Azul Compa\u00f1ia Cafe"},
+  {id:"CAF-002",cat:"Cafe Bolsa",n:"Cafe bolsa 250g",u:"unidad",min:2,s:3,c:28000,p:"1 Azul Compa\u00f1ia Cafe"},
+  {id:"CAF-003",cat:"Cafe Bolsa",n:"Cafe bolsa 500g",u:"unidad",min:2,s:5,c:55000,p:"1 Azul Compa\u00f1ia Cafe"},
+  {id:"BC-001",cat:"Bebidas Calientes",n:"Cocoa",u:"gramos",min:50,s:142,c:43,p:"D1"},
+  {id:"BC-002",cat:"Bebidas Calientes",n:"Milo",u:"gramos",min:80,s:220,c:50,p:"D1"},
+  {id:"BC-003",cat:"Bebidas Calientes",n:"Te chai (sobres)",u:"unidad",min:10,s:31,c:2400,p:"BLACKMILL SAS"},
+  {id:"BC-004",cat:"Bebidas Calientes",n:"Infusion Jengibre",u:"sobre",min:10,s:21,c:2401,p:"Varios"},
+  {id:"BC-006",cat:"Bebidas Calientes",n:"Infusion Frutos Deshidratados",u:"unidad",min:10,s:41,c:0,p:"Otro"},
+  {id:"BF-001",cat:"Bebidas Frias",n:"Jugo Mandarina",u:"unidad",min:4,s:16,c:2200,p:"Surtipulpas"},
+  {id:"BF-002",cat:"Bebidas Frias",n:"Jugo Frutos Rojos",u:"unidad",min:4,s:14,c:1800,p:"Surtipulpas"},
+  {id:"BF-003",cat:"Bebidas Frias",n:"Jugo Frutos Amarillos",u:"unidad",min:4,s:16,c:1850,p:"Surtipulpas"},
+  {id:"BF-004",cat:"Bebidas Frias",n:"Jugo de Tamarindo",u:"unidad",min:3,s:10,c:2500,p:"Surtipulpas"},
+  {id:"BF-005",cat:"Bebidas Frias",n:"Jugo de Fresa",u:"unidad",min:3,s:7,c:2500,p:"Surtipulpas"},
+  {id:"BF-006",cat:"Bebidas Frias",n:"Limonada Natural",u:"unidad",min:4,s:25,c:1800,p:"Surtipulpas"},
+  {id:"BF-007",cat:"Bebidas Frias",n:"Limonada Mango Biche",u:"unidad",min:3,s:6,c:2450,p:"Surtipulpas"},
+  {id:"BF-008",cat:"Bebidas Frias",n:"Limonada de Coco",u:"unidad",min:4,s:18,c:3200,p:"Surtipulpas"},
+  {id:"BF-009",cat:"Bebidas Frias",n:"Limonada de Cereza",u:"unidad",min:3,s:10,c:2400,p:"Surtipulpas"},
+  {id:"BF-010",cat:"Bebidas Frias",n:"Hielo",u:"gramos",min:2000,s:2660,c:2,p:"Carulla"},
+  {id:"BF-011",cat:"Bebidas Frias",n:"Soda Bretana",u:"unidad",min:4,s:20,c:2800,p:"Carulla"},
+  {id:"BF-012",cat:"Bebidas Frias",n:"Agua con Gas",u:"unidad",min:10,s:46,c:0,p:"CI Agua de la Pe\u00f1a"},
+  {id:"BF-013",cat:"Bebidas Frias",n:"Agua sin Gas",u:"unidad",min:15,s:92,c:0,p:"CI Agua de la Pe\u00f1a"},
+  {id:"BF-016",cat:"Bebidas Frias",n:"Helado Vainilla",u:"gramos",min:500,s:5336,c:18,p:"Colanta"},
+  {id:"OPS-001",cat:"Opciones Saladas",n:"Pastel de Carne 100G",u:"unidad",min:5,s:0,c:3066,p:"Pan Trigo y Arte"},
+  {id:"OPS-002",cat:"Opciones Saladas",n:"Pastel de Jamon y Queso",u:"unidad",min:5,s:4,c:3080,p:"Pan Trigo y Arte"},
+  {id:"OPS-003",cat:"Opciones Saladas",n:"Palito de Queso",u:"unidad",min:20,s:40,c:1368,p:"Pan Trigo y Arte"},
+  {id:"OPS-004",cat:"Opciones Saladas",n:"Croissant de Mantequilla",u:"unidad",min:10,s:22,c:1400,p:"Congelados Hechizo"},
+  {id:"OPS-005",cat:"Opciones Saladas",n:"Papas Natural",u:"porcion",min:5,s:7,c:2300,p:"Varios"},
+  {id:"OPS-006",cat:"Opciones Saladas",n:"Papas Limon",u:"porcion",min:5,s:6,c:2300,p:"Varios"},
+  {id:"OPS-007",cat:"Opciones Saladas",n:"Rosquillas",u:"unidad",min:5,s:7,c:2050,p:"Varios"},
+  {id:"OPS-008",cat:"Opciones Saladas",n:"Platanitos Dulces",u:"porcion",min:5,s:8,c:2300,p:"Varios"},
+  {id:"OPS-009",cat:"Opciones Saladas",n:"Platanitos Verdes Natural",u:"porcion",min:3,s:0,c:2300,p:"Varios"},
+  {id:"OPS-010",cat:"Opciones Saladas",n:"Galletas de queso x2",u:"unidad",min:10,s:48,c:900,p:"Caseritas"},
+  {id:"OPS-011",cat:"Opciones Saladas",n:"Empanaditas",u:"unidad",min:10,s:0,c:560,p:"Pan Trigo y Arte"},
+  {id:"OPS-012",cat:"Opciones Saladas",n:"Waffles",u:"unidad",min:4,s:0,c:1515,p:"Carulla"},
+  {id:"OPS-013",cat:"Opciones Saladas",n:"Salchicha Ranchera",u:"unidad",min:4,s:0,c:1857,p:"Carulla"},
+  {id:"OPS-014",cat:"Opciones Saladas",n:"Queso Mozzarella",u:"tajada",min:4,s:0,c:625,p:"D1"},
+  {id:"OPD-001",cat:"Opciones Dulces",n:"Porcion Zanahoria",u:"unidad",min:3,s:3,c:2558,p:"Maritza Cortez"},
+  {id:"OPD-002",cat:"Opciones Dulces",n:"Alfajor tradicional",u:"unidad",min:5,s:1,c:1500,p:"Caseritas"},
+  {id:"OPD-003",cat:"Opciones Dulces",n:"Trufas chocolate",u:"unidad",min:5,s:6,c:300,p:"Varios"},
+  {id:"OPD-004",cat:"Opciones Dulces",n:"Minibrownies",u:"unidad",min:5,s:14,c:717,p:"D1"},
+  {id:"OPD-005",cat:"Opciones Dulces",n:"Porcion Envinada",u:"unidad",min:3,s:21,c:2240,p:"Caseritas"},
+  {id:"OPD-006",cat:"Opciones Dulces",n:"Galleta de Mantequilla",u:"unidad",min:100,s:200,c:0,p:"Otro"},
+  {id:"OPD-007",cat:"Opciones Dulces",n:"Brownie",u:"unidad",min:3,s:0,c:3600,p:"Rumas"},
+  {id:"OPD-008",cat:"Opciones Dulces",n:"Salsa Arequipe",u:"gramos",min:200,s:0,c:25,p:"Colanta"},
+  {id:"OPD-009",cat:"Opciones Dulces",n:"Porcion Vainilla",u:"unidad",min:3,s:0,c:2558,p:"Maritza Cortez"},
+  {id:"AD-001",cat:"Adiciones",n:"Leche Entera",u:"ml",min:900,s:0,c:3,p:"Carulla"},
+  {id:"AD-002",cat:"Adiciones",n:"Leche Deslactosada",u:"ml",min:5000,s:4500,c:3,p:"Carulla"},
+  {id:"AD-003",cat:"Adiciones",n:"Leche Almendras",u:"ml",min:900,s:0,c:11,p:"D1"},
+  {id:"AD-004",cat:"Adiciones",n:"Yerbabuena",u:"unidad",min:5,s:0,c:125,p:"Carulla"},
+  {id:"AD-005",cat:"Adiciones",n:"Sobres Azucar",u:"unidad",min:200,s:1338,c:0,p:"Desechables Belen"},
+  {id:"AD-006",cat:"Adiciones",n:"Endulzante (sobres)",u:"unidad",min:50,s:118,c:0,p:"Desechables Belen"},
+  {id:"AD-007",cat:"Adiciones",n:"Panela (sobres)",u:"unidad",min:200,s:676,c:0,p:"Carulla"},
+  {id:"AD-008",cat:"Adiciones",n:"Galletas Minichips",u:"paquete",min:3,s:5,c:9990,p:"D1"},
+  {id:"AD-009",cat:"Adiciones",n:"Mermelada Mora",u:"gramos",min:200,s:355,c:12,p:"D1"},
+  {id:"AD-010",cat:"Adiciones",n:"Pistacho",u:"gramos",min:70,s:69,c:114,p:"D1"},
+  {id:"AD-011",cat:"Adiciones",n:"Aji",u:"gramos",min:250,s:375,c:18,p:"D1"},
+  {id:"AD-012",cat:"Adiciones",n:"Salsa Showy",u:"gramos",min:200,s:0,c:25,p:"D1"},
+  {id:"AD-013",cat:"Adiciones",n:"Amaretto",u:"ml",min:750,s:0,c:47,p:"Varios"},
+  {id:"AD-014",cat:"Adiciones",n:"Vino",u:"ml",min:750,s:700,c:27,p:"Varios"},
+  {id:"AD-015",cat:"Adiciones",n:"Chantilli",u:"gramos",min:250,s:125,c:44,p:"D1"},
+  {id:"AD-016",cat:"Adiciones",n:"Limones",u:"unidad",min:5,s:1,c:5,p:"Carulla"},
+  {id:"AD-017",cat:"Adiciones",n:"Frutos Rojos",u:"bolsita",min:20,s:42,c:524,p:"Varios"},
+  {id:"AD-018",cat:"Adiciones",n:"Fresas",u:"gramos",min:500,s:0,c:16,p:"Carulla"},
+  {id:"AD-019",cat:"Adiciones",n:"Salsa Tomate",u:"gramos",min:500,s:0,c:9,p:"D1"},
+  {id:"AD-020",cat:"Adiciones",n:"Nutella",u:"gramos",min:350,s:0,c:37,p:"D1"},
+  {id:"DES-001",cat:"Desechables",n:"Vaso 7oz",u:"unidad",min:50,s:183,c:0,p:"Desechables Belen"},
+  {id:"DES-002",cat:"Desechables",n:"Vaso carton 12oz",u:"unidad",min:30,s:20,c:0,p:"Desechables Belen"},
+  {id:"DES-003",cat:"Desechables",n:"Vaso 12oz plastico",u:"unidad",min:30,s:469,c:0,p:"Desechables Belen"},
+  {id:"DES-004",cat:"Desechables",n:"Tapa vaso 7oz",u:"unidad",min:50,s:150,c:0,p:"Desechables Belen"},
+  {id:"DES-005",cat:"Desechables",n:"Tapa domo 12oz",u:"unidad",min:30,s:100,c:0,p:"Desechables Belen"},
+  {id:"DES-006",cat:"Desechables",n:"Carton",u:"unidad",min:30,s:108,c:0,p:"Desechables Belen"},
+  {id:"DES-007",cat:"Desechables",n:"Tapa 12oz perforada",u:"unidad",min:30,s:100,c:0,p:"Desechables Belen"},
+  {id:"DES-008",cat:"Desechables",n:"Bolsas de Papel #6",u:"unidad",min:30,s:91,c:0,p:"Desechables Belen"},
+  {id:"DES-009",cat:"Desechables",n:"Bolsas de Papel #60",u:"unidad",min:20,s:39,c:0,p:"Desechables Belen"},
+  {id:"DES-010",cat:"Desechables",n:"Cajas",u:"unidad",min:10,s:17,c:0,p:"Desechables Belen"},
+  {id:"DES-011",cat:"Desechables",n:"Rollo Vinipel",u:"rollo",min:1,s:1,c:0,p:"Desechables Belen"},
+  {id:"DES-012",cat:"Desechables",n:"Pitillos Biodegradables",u:"unidad",min:100,s:315,c:0,p:"Desechables Belen"},
+  {id:"DES-013",cat:"Desechables",n:"Mezcladores",u:"unidad",min:100,s:566,c:0,p:"Desechables Belen"},
+  {id:"DES-014",cat:"Desechables",n:"Servilletas",u:"paquete",min:2,s:3,c:0,p:"Desechables Belen"},
+  {id:"PAP-001",cat:"Papeleria",n:"Rollo Impresora",u:"unidad",min:2,s:0,c:0,p:"Otro"},
+  {id:"PAP-002",cat:"Papeleria",n:"Lapicero",u:"unidad",min:2,s:2,c:0,p:"Otro"},
+  {id:"PAP-003",cat:"Papeleria",n:"Cinta",u:"unidad",min:1,s:0,c:0,p:"Otro"},
+  {id:"PAP-004",cat:"Papeleria",n:"Steakers",u:"unidad",min:50,s:97,c:0,p:"Otro"},
+  {id:"ASE-001",cat:"Aseo",n:"Bolsa Basura Negra",u:"unidad",min:5,s:0,c:0,p:"Otro"},
+  {id:"ASE-002",cat:"Aseo",n:"Bolsa Basura Verde",u:"unidad",min:5,s:0,c:0,p:"Otro"},
+  {id:"ASE-003",cat:"Aseo",n:"Esponja Platos",u:"unidad",min:2,s:3,c:0,p:"Otro"},
+  {id:"ASE-004",cat:"Aseo",n:"Toalla Secar",u:"unidad",min:2,s:2,c:0,p:"Otro"},
+  {id:"ASE-005",cat:"Aseo",n:"Toalla Limpiar",u:"unidad",min:2,s:2,c:0,p:"Otro"},
+  {id:"ASE-006",cat:"Aseo",n:"Jabon Platos",u:"unidad",min:1,s:1,c:0,p:"Otro"},
+  {id:"ASE-007",cat:"Aseo",n:"Vinagre",u:"unidad",min:1,s:1,c:0,p:"Otro"},
+  {id:"ASE-008",cat:"Aseo",n:"Blanqueador",u:"unidad",min:1,s:1,c:0,p:"Otro"},
+  {id:"ASE-009",cat:"Aseo",n:"Limpia piso",u:"unidad",min:1,s:1,c:0,p:"Otro"}
+];
+
+// ── MENU ──────────────────────────────────────────────────────────────────────
+var MENU=[
+  {cod:"BC001",cat:"Bebidas Calientes",n:"Cafe Americano corto",p:5500},
+  {cod:"BC002",cat:"Bebidas Calientes",n:"Cafe Americano Largo",p:7500},
+  {cod:"BC003",cat:"Bebidas Calientes",n:"Cafe Espresso",p:5500},
+  {cod:"BC004",cat:"Bebidas Calientes",n:"Cafe Espresso doble",p:6500},
+  {cod:"BC005",cat:"Bebidas Calientes",n:"Cafe Perico",p:6000},
+  {cod:"BC006",cat:"Bebidas Calientes",n:"Cafe Latte",p:7500},
+  {cod:"BC007",cat:"Bebidas Calientes",n:"Cafe Moca",p:7500},
+  {cod:"BC008",cat:"Bebidas Calientes",n:"Cafe Capuccino",p:7500},
+  {cod:"BC009",cat:"Bebidas Calientes",n:"Cafe Macciato",p:6000},
+  {cod:"BC010",cat:"Bebidas Calientes",n:"Infusion Yerbabuena",p:5500},
+  {cod:"BC011",cat:"Bebidas Calientes",n:"Infusion Jengibre",p:5500},
+  {cod:"BC012",cat:"Bebidas Calientes",n:"Infusion Frutos Rojos",p:5500},
+  {cod:"BC013",cat:"Bebidas Calientes",n:"Te Chai",p:7000},
+  {cod:"BC014",cat:"Bebidas Calientes",n:"Chocolate Leche",p:6000},
+  {cod:"BC015",cat:"Bebidas Calientes",n:"Chocolate Agua",p:5500},
+  {cod:"BF001",cat:"Bebidas Frias",n:"Jugo Mandarina",p:8800},
+  {cod:"BF002",cat:"Bebidas Frias",n:"Jugo Frutos Rojos",p:7200},
+  {cod:"BF003",cat:"Bebidas Frias",n:"Jugo Frutos Amarillos",p:7200},
+  {cod:"BF004",cat:"Bebidas Frias",n:"Limonada de Coco",p:12000},
+  {cod:"BF005",cat:"Bebidas Frias",n:"Limonada de Cereza",p:9000},
+  {cod:"BF006",cat:"Bebidas Frias",n:"Limonada Mango Biche",p:9000},
+  {cod:"BF007",cat:"Bebidas Frias",n:"Limonada Natural",p:8000},
+  {cod:"BF008",cat:"Bebidas Frias",n:"Limonada Yerbabuena",p:10000},
+  {cod:"BF009",cat:"Bebidas Frias",n:"Jugo de Tamarindo",p:10000},
+  {cod:"BF010",cat:"Bebidas Frias",n:"Milo Frio",p:10000},
+  {cod:"BF011",cat:"Bebidas Frias",n:"Cafe Afogatto",p:12500},
+  {cod:"BF012",cat:"Bebidas Frias",n:"Cafe Latte Frio",p:10900},
+  {cod:"BF013",cat:"Bebidas Frias",n:"Malteada de Chocolate",p:15900},
+  {cod:"BF014",cat:"Bebidas Frias",n:"Cafe Mocca Frio",p:7200},
+  {cod:"BF015",cat:"Bebidas Frias",n:"Malteada de Vainilla",p:14900},
+  {cod:"BF016",cat:"Bebidas Frias",n:"Malteada de Cafe",p:15900},
+  {cod:"BF017",cat:"Bebidas Frias",n:"Malteada Frutos Rojos",p:14900},
+  {cod:"BF018",cat:"Bebidas Frias",n:"Soda Frutos Rojos",p:12900},
+  {cod:"BF019",cat:"Bebidas Frias",n:"Soda Natural",p:6400},
+  {cod:"BF020",cat:"Bebidas Frias",n:"Soda Michelada",p:8900},
+  {cod:"BF021",cat:"Bebidas Frias",n:"Cafe Las Maticas",p:15000},
+  {cod:"BF022",cat:"Bebidas Frias",n:"Agua Vidrio Natural",p:6900},
+  {cod:"BF023",cat:"Bebidas Frias",n:"Agua Vidrio Gas",p:7500},
+  {cod:"OPS001",cat:"Opciones Saladas",n:"Pastel de Carne 100g",p:8200},
+  {cod:"OPS002",cat:"Opciones Saladas",n:"Pastel Jamon y Queso",p:6800},
+  {cod:"OPS003",cat:"Opciones Saladas",n:"Palito de Queso",p:5800},
+  {cod:"OPS004",cat:"Opciones Saladas",n:"Croissant Mantequilla",p:5900},
+  {cod:"OPS005",cat:"Opciones Saladas",n:"Wafle Salado",p:20000},
+  {cod:"OPS006",cat:"Opciones Saladas",n:"Papas Natural",p:7000},
+  {cod:"OPS007",cat:"Opciones Saladas",n:"Papas Limon",p:7000},
+  {cod:"OPS008",cat:"Opciones Saladas",n:"Rosquillas",p:7000},
+  {cod:"OPS009",cat:"Opciones Saladas",n:"Platanitos Dulces",p:7000},
+  {cod:"OPS010",cat:"Opciones Saladas",n:"Platanitos Verdes Natural",p:7000},
+  {cod:"OPS011",cat:"Opciones Saladas",n:"Platanitos Verdes Limon",p:7000},
+  {cod:"OPS012",cat:"Opciones Saladas",n:"Galletas Queso x2",p:3500},
+  {cod:"OPS013",cat:"Opciones Saladas",n:"Empanaditas x5",p:11900},
+  {cod:"OPD001",cat:"Opciones Dulces",n:"Torta Zanahoria",p:12900},
+  {cod:"OPD002",cat:"Opciones Dulces",n:"Alfajor Tradicional",p:6800},
+  {cod:"OPD003",cat:"Opciones Dulces",n:"Trufas Chocolate",p:4000},
+  {cod:"OPD004",cat:"Opciones Dulces",n:"Minibrownies",p:3000},
+  {cod:"OPD005",cat:"Opciones Dulces",n:"Brownie con Helado",p:15000},
+  {cod:"OPD006",cat:"Opciones Dulces",n:"Torta de Envinada",p:7500},
+  {cod:"OPD007",cat:"Opciones Dulces",n:"Paquete Galletas x20",p:11900},
+  {cod:"OPD008",cat:"Opciones Dulces",n:"Torta Vainilla Frutos Rojos Helado",p:15000},
+  {cod:"MA001",cat:"Maticas / Accesorios",n:"Planta Accesorio T20",p:20000},
+  {cod:"MA005",cat:"Maticas / Accesorios",n:"Planta Accesorio T30",p:35000},
+  {cod:"MA008",cat:"Maticas / Accesorios",n:"Planta Accesorio T45",p:50000},
+  {cod:"MA009",cat:"Maticas / Accesorios",n:"Planta Accesorio T50",p:55000},
+  {cod:"MA012",cat:"Maticas / Accesorios",n:"Planta Accesorio T65",p:70000},
+  {cod:"CB001",cat:"Cafe Bolsa",n:"Las Maticas Bolsa 500g",p:65000},
+  {cod:"CB002",cat:"Cafe Bolsa",n:"Las Maticas Bolsa 250g",p:35000},
+  {cod:"AD001",cat:"Adiciones",n:"Leche Extra",p:3000},
+  {cod:"AD002",cat:"Adiciones",n:"Shot Cafe",p:5500},
+  {cod:"AD003",cat:"Adiciones",n:"Leche Almendras",p:5500},
+  {cod:"AD004",cat:"Adiciones",n:"Vaso Leche 12 oz",p:5500},
+  {cod:"AD005",cat:"Adiciones",n:"Chantilli",p:1000}
+];
+
+// ── RECETAS ───────────────────────────────────────────────────────────────────
+// AD-008 Galletas Minichips: 1 galleta = 0.05 paquetes (1paq=20 galletas)
+// AD-016 Limones: NO descuenta (control manual)
+// AD-004 Yerbabuena (reemplaza BF-015)
+// AD-017 Frutos Rojos en bolsitas (1 bolsita = 25g)
+var RECETAS={
+  "Cafe Americano corto":  [["CAF-001",9,"g"],["AD-008",0.05,"paq"]],
+  "Cafe Americano Largo":  [["CAF-001",18,"g"],["AD-008",0.05,"paq"]],
+  "Cafe Espresso":         [["CAF-001",9,"g"],["AD-008",0.05,"paq"]],
+  "Cafe Espresso doble":   [["CAF-001",18,"g"],["AD-008",0.05,"paq"]],
+  "Cafe Perico":           [["CAF-001",9,"g"],["AD-002",100,"ml"],["AD-008",0.05,"paq"]],
+  "Cafe Latte":            [["CAF-001",9,"g"],["AD-002",300,"ml"],["AD-008",0.05,"paq"]],
+  "Cafe Moca":             [["CAF-001",9,"g"],["AD-002",350,"ml"],["BC-001",5,"g"],["AD-008",0.05,"paq"]],
+  "Cafe Capuccino":        [["CAF-001",9,"g"],["AD-002",250,"ml"],["AD-008",0.05,"paq"]],
+  "Cafe Macciato":         [["CAF-001",9,"g"],["AD-002",60,"ml"],["AD-008",0.05,"paq"]],
+  "Infusion Yerbabuena":   [["AD-004",1,"und"]],
+  "Infusion Jengibre":     [["BC-004",1,"sobre"],["AD-004",1,"und"]],
+  "Infusion Frutos Rojos": [["AD-017",1,"bolsita"]],
+  "Te Chai":               [["BC-003",1,"sobre"],["AD-002",300,"ml"]],
+  "Chocolate Leche":       [["BC-001",6,"g"],["AD-002",250,"ml"]],
+  "Chocolate Agua":        [["BC-001",9,"g"]],
+  "Jugo Mandarina":        [["BF-001",1,"und"],["AD-004",0.5,"und"]],
+  "Jugo Frutos Rojos":     [["BF-002",1,"und"],["AD-004",0.5,"und"]],
+  "Jugo Frutos Amarillos": [["BF-003",1,"und"],["AD-004",0.5,"und"]],
+  "Limonada de Coco":      [["BF-008",1,"und"],["AD-002",350,"ml"]],
+  "Limonada de Cereza":    [["BF-009",1,"und"],["AD-004",0.5,"und"]],
+  "Limonada Mango Biche":  [["BF-007",1,"und"]],
+  "Limonada Natural":      [["BF-006",1,"und"]],
+  "Limonada Yerbabuena":   [["BF-006",1,"und"],["AD-004",1,"und"]],
+  "Jugo de Tamarindo":     [["BF-004",1,"und"]],
+  "Milo Frio":             [["BC-002",70,"g"],["AD-002",300,"ml"]],
+  "Cafe Afogatto":         [["CAF-001",18,"g"],["BF-016",140,"g"],["AD-013",65,"ml"]],
+  "Cafe Latte Frio":       [["CAF-001",18,"g"],["AD-002",350,"ml"]],
+  "Malteada de Chocolate": [["AD-002",250,"ml"],["BC-001",10,"g"],["BF-016",210,"g"]],
+  "Malteada de Vainilla":  [["AD-002",250,"ml"],["BF-016",210,"g"]],
+  "Malteada de Cafe":      [["CAF-001",18,"g"],["BF-016",210,"g"],["AD-002",150,"ml"]],
+  "Malteada Frutos Rojos": [["AD-002",250,"ml"],["BF-016",210,"g"],["AD-017",2,"bolsita"]],
+  "Soda Frutos Rojos":     [["BF-011",1,"und"],["AD-017",1,"bolsita"]],
+  "Soda Natural":          [["BF-011",1,"und"]],
+  "Soda Michelada":        [["BF-011",1,"und"]],
+  "Cafe Las Maticas":      [["CAF-001",18,"g"],["AD-002",250,"ml"],["BF-016",70,"g"],["AD-015",30,"g"]],
+  "Pastel de Carne 100g":  [["OPS-001",1,"und"],["AD-011",20,"g"]],
+  "Pastel Jamon y Queso":  [["OPS-002",1,"und"]],
+  "Palito de Queso":       [["OPS-003",1,"und"],["AD-009",30,"g"]],
+  "Croissant Mantequilla": [["OPS-004",1,"und"]],
+  "Rosquillas":            [["OPS-007",1,"und"]],
+  "Empanaditas x5":        [["OPS-011",5,"und"]],
+  "Papas Natural":         [["OPS-005",1,"porcion"]],
+  "Papas Limon":           [["OPS-006",1,"porcion"]],
+  "Torta Zanahoria":       [["OPD-001",1,"und"],["AD-015",30,"g"],["AD-010",5,"g"]],
+  "Alfajor Tradicional":   [["OPD-002",1,"und"]],
+  "Trufas Chocolate":      [["OPD-003",1,"und"]],
+  "Minibrownies":          [["OPD-004",1,"und"]],
+  "Brownie con Helado":    [["OPD-007",1,"und"],["BF-016",70,"g"],["OPD-008",30,"g"]],
+  "Torta de Envinada":     [["OPD-005",1,"und"],["AD-014",50,"ml"]],
+  "Wafle Salado":          [["OPS-012",2,"und"],["OPS-013",2,"und"],["OPS-014",2,"tajada"],["AD-012",20,"g"]],
+  "Paquete Galletas x20":  [["OPD-006",20,"und"]]
+};
+
+// ── VERSIONES ─────────────────────────────────────────────────────────────────
+var verGuardada=localStorage.getItem("lm_v");
+if(verGuardada!==VER){
+  GD("lm_i",INS_DEF);
+  localStorage.setItem("lm_v",VER);
+  if(!localStorage.getItem("lm_e"))GD("lm_e",[]);
+  if(!localStorage.getItem("lm_s"))GD("lm_s",[]);
+}
+var INS=LD("lm_i",INS_DEF);
+var ENT=LD("lm_e",[]);
+var SAL=LD("lm_s",[]);
+
+G("verBadge").textContent=VER;
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+function abrirModal(titulo,cuerpo,onConfirm){
+  G("modal-title").textContent=titulo;
+  G("modal-body").innerHTML=cuerpo;
+  G("modal-overlay").style.display="flex";
+  modalCallback=onConfirm;
+  G("modal-confirm").onclick=function(){if(modalCallback)modalCallback();};
+}
+function cerrarModal(){G("modal-overlay").style.display="none";modalCallback=null;}
+
+// ── SELECTS ───────────────────────────────────────────────────────────────────
+function poblarSelects(){
+  var selE=G("eIns");
+  selE.innerHTML='<option value="">-- Seleccionar insumo --</option>';
+  CORD.forEach(function(cat){
+    var items=INS.filter(function(x){return x.cat===cat;});
+    if(!items.length)return;
+    var og=document.createElement("optgroup");og.label=CNOM[cat]||cat;
+    items.forEach(function(ins){
+      var opt=document.createElement("option");opt.value="ins_"+INS.indexOf(ins);
+      opt.text=ins.n+" ("+ins.u+")";og.appendChild(opt);
+    });selE.appendChild(og);
+  });
+  var selS=G("sItem");
+  selS.innerHTML='<option value="">-- Seleccionar producto o insumo --</option>';
+  var catsCarta=["Bebidas Calientes","Bebidas Frias","Opciones Saladas","Opciones Dulces","Maticas / Accesorios","Cafe Bolsa","Adiciones"];
+  catsCarta.forEach(function(cat){
+    var prods=MENU.filter(function(x){return x.cat===cat;});if(!prods.length)return;
+    var og=document.createElement("optgroup");og.label="\u2615 "+cat;
+    prods.forEach(function(prod){
+      var opt=document.createElement("option");opt.value="prod_"+prod.n;
+      opt.text=prod.n+(RECETAS[prod.n]?" \u2605":"");og.appendChild(opt);
+    });selS.appendChild(og);
+  });
+  var og2=document.createElement("optgroup");og2.label="\u2500\u2500 Insumos directos \u2500\u2500";selS.appendChild(og2);
+  CORD.forEach(function(cat){
+    var items=INS.filter(function(x){return x.cat===cat;});if(!items.length)return;
+    var og=document.createElement("optgroup");og.label="\ud83d\udce6 "+(CNOM[cat]||cat);
+    items.forEach(function(ins){
+      var opt=document.createElement("option");opt.value="ins_"+INS.indexOf(ins);
+      opt.text=ins.n+" ("+ins.u+")";og.appendChild(opt);
+    });selS.appendChild(og);
+  });
+  ["ePro","iPro"].forEach(function(id){
+    var s=G(id);s.innerHTML='<option value="">-- Seleccionar --</option>';
+    PROVS.forEach(function(p){var o=document.createElement("option");o.value=o.text=p;s.appendChild(o);});
+  });
+  if(G("eFec")&&!G("eFec").value)G("eFec").value=hoy();
+  if(G("sFec")&&!G("sFec").value)G("sFec").value=hoy();
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function showTab(id){
+  document.querySelectorAll(".pn").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".tab").forEach(function(b){b.classList.remove("active");});
+  G("P-"+id).classList.add("active");G("T-"+id).classList.add("active");
+  if(id==="menu"){poblarSelects();renderMenu();}
+  if(id==="stock"){renderStock();}
+  if(id==="insumos"){renderInsumos();}
+  if(id==="entradas"){poblarSelects();renderEntradas();}
+  if(id==="salidas"){poblarSelects();renderSalidas();renderResumeDia();}
+  if(id==="reporte"){renderRepStars();renderRepStock();renderRepEntradas();}
+  if(id==="descargar"){initDescargar();}
+}
+
+// ── MENU ──────────────────────────────────────────────────────────────────────
+function renderMenu(){
+  var cats=["Todos"];
+  MENU.forEach(function(x){if(cats.indexOf(x.cat)===-1)cats.push(x.cat);});
+  var chipsEl=G("chips-menu");chipsEl.innerHTML="";
+  cats.forEach(function(c){
+    var sp=document.createElement("span");sp.className="chip"+(c===chipMenu?" on":"");
+    sp.textContent=c;sp.setAttribute("data-cat",c);
+    sp.onclick=function(){chipMenu=this.getAttribute("data-cat");renderMenu();};
+    chipsEl.appendChild(sp);
+  });
+  var b=G("buscaMenu").value.toLowerCase();
+  var items=MENU.filter(function(x){
+    return(chipMenu==="Todos"||x.cat===chipMenu)&&(x.n.toLowerCase().indexOf(b)>=0||x.cod.toLowerCase().indexOf(b)>=0);
+  });
+  var grid=G("gridMenu");
+  if(!items.length){grid.innerHTML='<div style="text-align:center;padding:28px;color:#aaa">Sin resultados</div>';return;}
+  grid.innerHTML="";
+  items.forEach(function(x){
+    var d=document.createElement("div");d.className="mi "+(CMNU[x.cat]||"mbc");
+    var recTag=RECETAS[x.n]?'<span class="rec-tag">Receta</span>':"";
+    d.innerHTML='<div class="mi-c">'+x.cat+'</div><div class="mi-n">'+x.n+recTag+'</div><div class="mi-p">'+fmt(x.p)+'</div>';
+    grid.appendChild(d);
+  });
+}
+
+// ── ENTRADAS ──────────────────────────────────────────────────────────────────
+function registrarEntrada(){
+  var val=G("eIns").value,q=parseFloat(G("eCan").value),cs=parseFloat(G("eCos").value)||0;
+  var f=G("eFec").value,pv=G("ePro").value,rs=G("eRes").value,nt=G("eNot").value;
+  if(!val||!q||!f){toast("Completa los campos obligatorios");return;}
+  var idx=parseInt(val.replace("ins_",""));var ins=INS[idx];
+  ins.s=(ins.s||0)+q;ins.ue=f;
+  ENT.unshift({fecha:f,cat:ins.cat,n:ins.n,cantidad:q,costo:cs,proveedor:pv,resp:rs,nota:nt});
+  GD("lm_i",INS);GD("lm_e",ENT);
+  toast("+"+fNi(q)+" "+ins.u+" de "+ins.n);
+  ["eIns","eCan","eCos","eNot"].forEach(function(id){G(id).value="";});G("ePro").value="";
+  renderEntradas();poblarSelects();actualizarBadgeStock();
+}
+function renderEntradas(){
+  var tb=G("tablaEntradas");
+  if(!ENT.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:22px;color:#aaa">Sin entradas registradas</td></tr>';return;}
+  tb.innerHTML=ENT.slice(0,150).map(function(e){
+    return'<tr><td>'+e.fecha+'</td><td>'+cBadge(e.cat||"")+'</td><td><strong>'+e.n+'</strong></td><td>+'+fNi(e.cantidad)+'</td><td>'+fmt(e.costo)+'</td><td>'+(e.proveedor||"--")+'</td><td>'+(e.resp||"--")+'</td><td style="font-size:.71rem;color:#888">'+(e.nota||"")+'</td></tr>';
+  }).join("");
+}
+
+// ── SALIDAS ───────────────────────────────────────────────────────────────────
+function prepararSalida(){
+  var val=G("sItem").value,cant=parseInt(G("sCan").value)||1;
+  var fecha=G("sFec").value||hoy(),mot=G("sMot").value,res=G("sRes").value,nota=G("sNot").value;
+  if(!val){toast("Selecciona un producto o insumo");return;}
+  var esProd=val.indexOf("prod_")===0;
+  var nombreProd=esProd?val.replace("prod_",""):null;
+  var receta=esProd?RECETAS[nombreProd]:null;
+  if(esProd&&receta){
+    var insuf=[];
+    var filas=receta.map(function(item){
+      var ins=INS.filter(function(x){return x.id===item[0];})[0];
+      var qT=item[1]*cant;
+      if(!ins)return'<div class="modal-ing-row"><span class="modal-ing-name">'+item[0]+'</span><span class="modal-ing-qty">'+qT+' '+item[2]+'</span></div>';
+      var warn="";
+      if(ins.s<qT){insuf.push(ins.n);warn='<span class="modal-ing-warn">&#9888; Stock: '+fNi(ins.s)+'</span>';}
+      return'<div class="modal-ing-row"><span class="modal-ing-name">'+ins.n+'</span><span class="modal-ing-qty">'+fNi(qT)+' '+item[2]+'</span>'+warn+'</div>';
+    }).join("");
+    var warnBox=insuf.length?'<div class="warn-box">&#9888; Stock insuficiente para: <strong>'+insuf.join(", ")+'</strong>. Se registrar&aacute; igual.</div>':"";
+    var cuerpo=warnBox+'<div class="modal-ing">'+filas+'</div><p style="font-size:.75rem;color:#888;margin-top:4px">Motivo: <strong>'+mot+'</strong> &nbsp;|&nbsp; Resp.: <strong>'+res+'</strong></p>';
+    abrirModal("Confirmar: "+nombreProd+(cant>1?" x"+cant:""),cuerpo,function(){cerrarModal();ejecutarSalidaConReceta(nombreProd,cant,receta,fecha,mot,res,nota);});
+  } else if(esProd){
+    var menuItem=MENU.filter(function(x){return x.n===nombreProd;})[0];
+    var cat=menuItem?menuItem.cat:"Otros";
+    var c2='<div class="modal-ing"><div class="modal-ing-row"><span class="modal-ing-name">'+nombreProd+'</span><span class="modal-ing-qty">x'+cant+'</span></div></div><p style="font-size:.75rem;color:#888;margin-top:4px">Motivo: <strong>'+mot+'</strong> &nbsp;|&nbsp; Resp.: <strong>'+res+'</strong></p><p style="font-size:.72rem;color:#aaa;margin-top:5px">Sin receta \u2014 no se descontar\u00e1n insumos.</p>';
+    abrirModal("Confirmar: "+nombreProd,c2,function(){
+      cerrarModal();SAL.unshift({fecha:fecha,tipo:"producto",cat:cat,n:nombreProd,cantidad:cant,motivo:mot,resp:res,nota:nota,desglose:[]});
+      GD("lm_s",SAL);toast("Registrado: "+nombreProd);renderSalidas();renderResumeDia();
+      G("sItem").value="";G("sCan").value="1";G("sNot").value="";
+    });
+  } else {
+    var idx2=parseInt(val.replace("ins_",""));var ins2=INS[idx2];
+    var wI=ins2.s<cant?'<div class="warn-box">&#9888; Stock actual: <strong>'+fNi(ins2.s)+' '+ins2.u+'</strong>. Quedar\u00e1 negativo.</div>':"";
+    var c3=wI+'<div class="modal-ing"><div class="modal-ing-row"><span class="modal-ing-name">'+ins2.n+'</span><span class="modal-ing-qty">'+fNi(cant)+' '+ins2.u+'</span></div></div><p style="font-size:.75rem;color:#888;margin-top:4px">Motivo: <strong>'+mot+'</strong> &nbsp;|&nbsp; Resp.: <strong>'+res+'</strong></p>';
+    abrirModal("Confirmar: "+ins2.n,c3,function(){
+      cerrarModal();ins2.s=(ins2.s||0)-cant;
+      SAL.unshift({fecha:fecha,tipo:"insumo",cat:ins2.cat,n:ins2.n,cantidad:cant,motivo:mot,resp:res,nota:nota,desglose:[]});
+      GD("lm_i",INS);GD("lm_s",SAL);toast("-"+fNi(cant)+" "+ins2.u+" de "+ins2.n);
+      renderSalidas();renderResumeDia();actualizarBadgeStock();
+      G("sItem").value="";G("sCan").value="1";G("sNot").value="";
+    });
+  }
+}
+function ejecutarSalidaConReceta(nombreProd,cant,receta,fecha,mot,res,nota){
+  var desglose=[];
+  receta.forEach(function(item){
+    var ins=INS.filter(function(x){return x.id===item[0];})[0];
+    if(ins){var qT=item[1]*cant;ins.s=(ins.s||0)-qT;desglose.push(ins.n+": -"+fNi(qT)+" "+item[2]);}
+  });
+  var menuItem=MENU.filter(function(x){return x.n===nombreProd;})[0];
+  SAL.unshift({fecha:fecha,tipo:"producto",cat:menuItem?menuItem.cat:"Carta",n:nombreProd,cantidad:cant,motivo:mot,resp:res,nota:nota,desglose:desglose});
+  GD("lm_i",INS);GD("lm_s",SAL);
+  toast("Registrado: "+nombreProd+(cant>1?" x"+cant:""));
+  renderSalidas();renderResumeDia();actualizarBadgeStock();
+  G("sItem").value="";G("sCan").value="1";G("sNot").value="";
+}
+function renderResumeDia(){
+  var hoyStr=hoy();var ventasHoy=SAL.filter(function(s){return s.fecha===hoyStr&&s.tipo==="producto";});
+  var resumeEl=G("resumeDia");if(!ventasHoy.length){resumeEl.style.display="none";return;}
+  resumeEl.style.display="block";var porCat={};
+  ventasHoy.forEach(function(s){if(!porCat[s.cat])porCat[s.cat]=[];porCat[s.cat].push(s.n+(s.cantidad>1?" x"+s.cantidad:""));});
+  var html="";
+  Object.keys(porCat).forEach(function(cat){html+='<div class="resumen-cat"><strong>'+cat+':</strong> '+porCat[cat].join(", ")+'</div>';});
+  G("resumeBody").innerHTML=html;
+}
+function renderSalidas(){
+  var tb=G("tablaSalidas");
+  if(!SAL.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:22px;color:#aaa">Sin salidas registradas</td></tr>';return;}
+  tb.innerHTML=SAL.slice(0,150).map(function(s){
+    var tipoTag=s.tipo==="producto"?'<span class="bk ok">Producto</span>':'<span class="bk bj">Insumo</span>';
+    var desglose=(s.desglose&&s.desglose.length)?'<details style="font-size:.69rem;color:#666"><summary>Ver insumos</summary>'+s.desglose.join("<br>")+'</details>':'<span style="color:#ccc;font-size:.7rem">\u2014</span>';
+    return'<tr><td>'+s.fecha+'</td><td>'+tipoTag+'</td><td><strong>'+s.n+'</strong>'+(s.nota?'<br><span style="font-size:.69rem;color:#888">'+s.nota+'</span>':"")+'</td><td>'+fNi(s.cantidad)+'</td><td style="font-size:.76rem">'+s.motivo+'</td><td>'+(s.resp||"--")+'</td><td>'+desglose+'</td></tr>';
+  }).join("");
+}
+
+// ── STOCK ─────────────────────────────────────────────────────────────────────
+// Lógica especial: si hay leche deslactosada, ocultar alerta de leche entera
+function esExcluido(ins){
+  if(ins.id==="AD-001"){
+    var deslact=INS.filter(function(i){return i.id==="AD-002";})[0];
+    return deslact&&deslact.s>0;
+  }
+  return false;
+}
+function actualizarBadgeStock(){
+  var total=INS.filter(function(i){return !esExcluido(i)&&(i.s<=0||i.s<(i.min||0));}).length;
+  var badge=G("badge-stock");
+  if(total>0){badge.textContent=total;badge.style.display="inline-block";}
+  else{badge.style.display="none";}
+}
+function renderStock(){
+  var ok=INS.filter(function(i){return !esExcluido(i)&&i.s>=(i.min||0);});
+  var bj=INS.filter(function(i){return !esExcluido(i)&&i.s>0&&i.s<(i.min||0);});
+  var ag=INS.filter(function(i){return !esExcluido(i)&&i.s<=0;});
+  var lEntera=INS.filter(function(i){return i.id==="AD-001";})[0];
+  var usandoDesl=lEntera&&esExcluido(lEntera);
+  G("statsStock").innerHTML='<div class="sc"><div class="sn" style="color:#1E8449">'+ok.length+'</div><div class="sl">En Orden</div></div><div class="sc"><div class="sn" style="color:#E67E22">'+bj.length+'</div><div class="sl">Stock Bajo</div></div><div class="sc"><div class="sn" style="color:#C0392B">'+ag.length+'</div><div class="sl">Agotados</div></div>';
+  var al="";
+  if(usandoDesl)al+='<div class="alrt alrt-i">&#8505; Leche entera vac&iacute;a \u2014 usando Leche Deslactosada. Sin impacto en el men\u00fa.</div>';
+  if(ag.length)al+='<div class="alrt alrt-e"><strong>Agotados ('+ag.length+'):</strong> '+ag.map(function(i){return i.n;}).join(", ")+'</div>';
+  if(bj.length)al+='<div class="alrt alrt-w"><strong>Stock bajo ('+bj.length+'):</strong> '+bj.map(function(i){return i.n;}).join(", ")+'</div>';
+  if(!ag.length&&!bj.length)al+='<div class="alrt alrt-s">Todo el inventario en orden.</div>';
+  G("alertasStock").innerHTML=al;
+  var chipsEl=G("chips-stock");chipsEl.innerHTML="";
+  ["Todos"].concat(CORD).forEach(function(cat){
+    var sp=document.createElement("span");sp.className="chip"+(chipStock===cat?" on":"");
+    sp.textContent=cat==="Todos"?"Todos":(CNOM[cat]||cat);sp.setAttribute("data-cat",cat);
+    sp.onclick=function(){chipStock=this.getAttribute("data-cat");renderStock();};chipsEl.appendChild(sp);
+  });
+  var b=G("buscaStock").value.toLowerCase();
+  var fl=INS.filter(function(i){return(chipStock==="Todos"||i.cat===chipStock)&&i.n.toLowerCase().indexOf(b)>=0;})
+           .sort(function(a,b2){return CORD.indexOf(a.cat)-CORD.indexOf(b2.cat);});
+  G("tablaStock").innerHTML=fl.map(function(ins){
+    var ix=INS.indexOf(ins);
+    var excl=esExcluido(ins);
+    var row=excl?'style="opacity:.5"':'';
+    var badge=excl?'<span class="bk" style="background:#EBF5FB;color:#1A5276">Sustituida</span>':sBadge(ins.s,ins.min);
+    return'<tr '+row+'><td>'+cBadge(ins.cat)+'</td><td><strong>'+ins.n+'</strong></td><td style="color:#888">'+ins.u+'</td><td><strong>'+fNi(ins.s)+'</strong></td><td style="color:#888">'+fNi(ins.min)+'</td><td>'+badge+'</td><td style="font-size:.69rem;color:#aaa">'+(ins.ue||"--")+'</td><td><button class="btn btn-g btn-sm" onclick="irEntrada('+ix+')">+Entrada</button></td></tr>';
+  }).join("");
+  actualizarBadgeStock();
+}
+function irEntrada(ix){showTab("entradas");setTimeout(function(){G("eIns").value="ins_"+ix;G("eCan").focus();},150);}
+
+// ── INSUMOS ───────────────────────────────────────────────────────────────────
+function renderInsumos(){
+  var b=G("buscaInsumos").value.toLowerCase();var tb=G("tablaInsumos");var h="";
+  var ordCarta=["Bebidas Calientes","Bebidas Frias","Opciones Saladas","Opciones Dulces","Maticas / Accesorios","Cafe Bolsa","Adiciones"];
+  var prods=MENU.filter(function(x){return b===""||x.n.toLowerCase().indexOf(b)>=0||x.cat.toLowerCase().indexOf(b)>=0;})
+               .slice().sort(function(a,z){var ci=ordCarta.indexOf(a.cat)-ordCarta.indexOf(z.cat);return ci!==0?ci:a.n.localeCompare(z.n);});
+  if(prods.length){
+    h+='<tr><td colspan="7" class="sh" style="background:#1C4A2A">&#127829;&nbsp;PRODUCTOS DE LA CARTA</td></tr>';
+    var lc1="";
+    prods.forEach(function(x){
+      if(x.cat!==lc1){lc1=x.cat;h+='<tr class="sep"><td colspan="7">'+cBadge(x.cat)+"&nbsp;"+(CNOM[x.cat]||x.cat)+"</td></tr>";}
+      var recTag=RECETAS[x.n]?'<span class="rec-tag">Receta</span>':"";
+      h+='<tr style="background:#FDFAF6"><td>'+cBadge(x.cat)+'</td><td><strong>'+x.n+'</strong>'+recTag+'</td><td style="color:#1C4A2A;font-weight:700">'+fmt(x.p)+'</td><td style="color:#bbb">&mdash;</td><td style="color:#bbb">&mdash;</td><td style="color:#bbb">&mdash;</td><td style="color:#bbb;font-size:.69rem">Carta</td></tr>';
+    });
+  }
+  var ins2=INS.map(function(x,i){return{x:x,i:i};})
+             .filter(function(o){return b===""||o.x.n.toLowerCase().indexOf(b)>=0||o.x.cat.toLowerCase().indexOf(b)>=0;})
+             .sort(function(a,z){var ci=CORD.indexOf(a.x.cat)-CORD.indexOf(z.x.cat);return ci!==0?ci:a.x.n.localeCompare(z.x.n);});
+  if(ins2.length){
+    h+='<tr><td colspan="7" class="sh" style="background:#2E7D4F">&#129810;&nbsp;INSUMOS DE BODEGA</td></tr>';
+    var lc2="";
+    ins2.forEach(function(o){
+      if(o.x.cat!==lc2){lc2=o.x.cat;h+='<tr class="sep"><td colspan="7">'+cBadge(o.x.cat)+"&nbsp;"+(CNOM[o.x.cat]||o.x.cat)+"</td></tr>";}
+      h+='<tr><td>'+cBadge(o.x.cat)+'</td><td><strong>'+o.x.n+'</strong></td><td>'+fNi(o.x.s)+'</td><td style="color:#888">'+o.x.u+'</td><td style="color:#888">'+fNi(o.x.min)+'</td><td>'+fmt(o.x.c)+'</td><td><div class="ra"><button class="btn btn-a btn-sm" onclick="editarInsumo('+o.i+')">Editar</button><button class="btn btn-r btn-sm" onclick="eliminarInsumo('+o.i+')">Eliminar</button></div></td></tr>';
+    });
+  }
+  if(!h){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:#aaa">Sin resultados</td></tr>';return;}
+  tb.innerHTML=h;
+}
+function guardarInsumo(){
+  var nm=G("iNom").value.trim(),ct=G("iCat").value,un=G("iUni").value;
+  var mn=parseFloat(G("iMin").value)||0,sk=parseFloat(G("iSto").value)||0,co=parseFloat(G("iCos").value)||0,pv=G("iPro").value;
+  if(!nm){toast("El nombre es obligatorio");return;}
+  if(editIdx>=0){INS[editIdx]={id:INS[editIdx].id,cat:ct,n:nm,u:un,min:mn,s:sk,c:co,p:pv};toast("Actualizado");editIdx=-1;G("btnCancelar").style.display="none";}
+  else{INS.push({id:"NW-"+String(INS.length+1).padStart(3,"0"),cat:ct,n:nm,u:un,min:mn,s:sk,c:co,p:pv});toast("Agregado: "+nm);}
+  GD("lm_i",INS);["iNom","iMin","iSto","iCos"].forEach(function(id){G(id).value="";});G("iPro").value="";
+  renderInsumos();poblarSelects();
+}
+function editarInsumo(i){
+  var x=INS[i];G("iNom").value=x.n;G("iCat").value=x.cat;G("iUni").value=x.u;
+  G("iMin").value=x.min;G("iSto").value=x.s;G("iCos").value=x.c;G("iPro").value=x.p||"";
+  editIdx=i;G("btnCancelar").style.display="inline-flex";window.scrollTo({top:0,behavior:"smooth"});
+}
+function eliminarInsumo(i){if(!confirm('Eliminar "'+INS[i].n+'"?'))return;INS.splice(i,1);GD("lm_i",INS);renderInsumos();poblarSelects();toast("Eliminado");}
+function cancelarEdicion(){editIdx=-1;["iNom","iMin","iSto","iCos"].forEach(function(id){G(id).value="";});G("btnCancelar").style.display="none";}
+
+// ── REPORTE ───────────────────────────────────────────────────────────────────
+function renderRepStars(){
+  var el=G("repStars");el.innerHTML="";
+  for(var i=1;i<=5;i++){
+    var s=document.createElement("span");s.className="star"+(i<=repCalificacion?" on":"");
+    s.textContent="⭐";s.setAttribute("data-v",i);
+    s.onclick=function(){repCalificacion=parseInt(this.getAttribute("data-v"));renderRepStars();};
+    el.appendChild(s);
+  }
+}
+function renderRepStock(){
+  var ag=INS.filter(function(i){return !esExcluido(i)&&i.s<=0;});
+  var bj=INS.filter(function(i){return !esExcluido(i)&&i.s>0&&i.s<(i.min||0);});
+  var lEntera=INS.filter(function(i){return i.id==="AD-001";})[0];
+  var html="";
+  if(lEntera&&esExcluido(lEntera))html+='<div class="alrt alrt-i" style="margin-bottom:8px">&#8505; Leche entera vac&iacute;a \u2014 usando Leche Deslactosada.</div>';
+  if(!ag.length&&!bj.length){html+='<div class="alrt alrt-s">&#10003; Todo el inventario en orden.</div>';}
+  else{
+    if(ag.length)html+='<div class="alrt alrt-e"><strong>&#128308; Agotados:</strong> '+ag.map(function(i){return i.n;}).join(", ")+'</div>';
+    if(bj.length)html+='<div class="alrt alrt-w"><strong>&#9889; Stock bajo:</strong> '+bj.map(function(i){return i.n+" ("+fNi(i.s)+")";}).join(", ")+'</div>';
+  }
+  G("repStock").innerHTML=html;
+}
+function renderRepEntradas(){
+  var hoyStr=hoy();var entHoy=ENT.filter(function(e){return e.fecha===hoyStr;});
+  var el=G("repEntradas");
+  if(!entHoy.length){el.innerHTML='<p style="color:#aaa;font-size:.83rem">Sin entradas registradas hoy.</p>';return;}
+  el.innerHTML=entHoy.map(function(e){
+    return'<div style="padding:6px 0;border-bottom:1px solid var(--c2);font-size:.82rem"><strong>+'+fNi(e.cantidad)+" "+e.u+'</strong> de '+e.n+' &mdash; '+(e.proveedor||"sin proveedor")+'</div>';
+  }).join("");
+}
+function generarReporte(){
+  var hoyStr=hoy();
+  var ag=INS.filter(function(i){return !esExcluido(i)&&i.s<=0;});
+  var bj=INS.filter(function(i){return !esExcluido(i)&&i.s>0&&i.s<(i.min||0);});
+  var entHoy=ENT.filter(function(e){return e.fecha===hoyStr;});
+  var salHoy=SAL.filter(function(s){return s.fecha===hoyStr;});
+  var res=G("repRes").value;var notas=G("repNotas").value.trim();
+  var lEntera=INS.filter(function(i){return i.id==="AD-001";})[0];
+  var MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  var d=new Date();var fechaLeg=d.getDate()+" de "+MESES[d.getMonth()];
+  var estrellas="\u2b50".repeat(repCalificacion);
+  var calLabel=["muy dif\u00edcil","dif\u00edcil","normal","muy bueno","excelente"][Math.min(repCalificacion-1,4)];
+  var msg="\u2615 *REPORTE LAS M\u00c1TICAS*\n\ud83d\udcc5 "+fechaLeg+" \u00b7 "+res+"\n\n";
+  if(lEntera&&esExcluido(lEntera))msg+="\u2139\ufe0f Leche entera vac\u00eda \u2014 usando Deslactosada.\n\n";
+  if(ag.length)msg+="\ud83d\udd34 *AGOTADOS:* "+ag.map(function(i){return i.n;}).join(", ")+"\n";
+  if(bj.length)msg+="\u26a1 *BAJOS:* "+bj.map(function(i){return i.n+" ("+fNi(i.s)+")";}).join(", ")+"\n";
+  if(!ag.length&&!bj.length)msg+="\u2705 Inventario en orden\n";
+  if(entHoy.length){
+    msg+="\n\ud83d\udce5 *ENTRADAS HOY ("+entHoy.length+")*\n";
+    entHoy.forEach(function(e){msg+="  + "+e.n+" x"+fNi(e.cantidad)+" \u2014 "+(e.proveedor||"sin proveedor")+"\n";});
+  }
+  if(salHoy.length){
+    var porMotivo={};
+    salHoy.forEach(function(s){var m=s.motivo||"Sin motivo";porMotivo[m]=(porMotivo[m]||0)+1;});
+    msg+="\n\ud83d\udce4 *SALIDAS HOY ("+salHoy.length+")*\n";
+    Object.keys(porMotivo).forEach(function(m){msg+="  \u2022 "+m+": "+porMotivo[m]+"\n";});
+  }
+  msg+="\n"+estrellas+" Turno "+calLabel;
+  if(notas)msg+="\n\ud83d\udcdd "+notas;
+  G("repPreview").textContent=msg;
+  G("repPreviewSection").style.display="block";
+  window._waMsg=msg;
+}
+function enviarWA(){
+  if(!window._waMsg){generarReporte();}
+  window.open("https://wa.me/?text="+encodeURIComponent(window._waMsg),"_blank");
+}
+
+// ── DESCARGAR ─────────────────────────────────────────────────────────────────
+function initDescargar(){
+  var h=hoy();var lunes=new Date();var day=lunes.getDay();
+  lunes.setDate(lunes.getDate()-(day===0?6:day-1));
+  if(!G("dlDesde").value)G("dlDesde").value=lunes.toISOString().slice(0,10);
+  if(!G("dlHasta").value)G("dlHasta").value=h;
+}
+function enRango(fecha,desde,hasta){return fecha>=desde&&fecha<=hasta;}
+function descargarCSV(tipo){
+  var desde=G("dlDesde").value||hoy(),hasta=G("dlHasta").value||hoy();
+  var entF=ENT.filter(function(e){return enRango(e.fecha,desde,hasta);});
+  var salF=SAL.filter(function(s){return enRango(s.fecha,desde,hasta);});
+  var BOM="\uFEFF";var label=(desde+"_"+hasta).replace(/-/g,"");var csv="";var fn="";
+  if(tipo==="entradas"){
+    fn="LasMaticas_Entradas_"+label+".csv";
+    csv="Fecha,Categoria,Insumo,Cantidad,Costo,Proveedor,Responsable,Nota\n";
+    csv+=entF.map(function(r){return r.fecha+',"'+(r.cat||"")+'","'+r.n+'",'+r.cantidad+","+(r.costo||0)+',"'+(r.proveedor||"")+'","'+(r.resp||"")+'","'+(r.nota||"")+'"';}).join("\n");
+  } else if(tipo==="salidas"){
+    fn="LasMaticas_Salidas_"+label+".csv";
+    csv="Fecha,Tipo,Categoria,Producto/Insumo,Cantidad,Motivo,Responsable,Nota,Insumos\n";
+    csv+=salF.map(function(r){var des=(r.desglose&&r.desglose.length)?r.desglose.join("|"):"";return r.fecha+","+(r.tipo||"")+',"'+(r.cat||"")+'","'+r.n+'",'+r.cantidad+',"'+r.motivo+'",'+(r.resp||"")+',"'+(r.nota||"")+'","'+des+'"';}).join("\n");
+  } else if(tipo==="stock"){
+    fn="LasMaticas_Stock_"+label+".csv";
+    csv="ID,Categoria,Insumo,Unidad,Stock,Minimo,Estado\n";
+    csv+=INS.slice().sort(function(a,b){return CORD.indexOf(a.cat)-CORD.indexOf(b.cat);}).map(function(r){var e=r.s<=0?"Agotado":r.s<r.min?"Bajo":"OK";return r.id+',"'+r.cat+'","'+r.n+'",'+r.u+","+r.s+","+r.min+","+e;}).join("\n");
+  } else {
+    fn="LasMaticas_Reporte_"+label+".csv";
+    csv="REPORTE COMPLETO LAS MATICAS\nPeriodo:,"+desde+" al "+hasta+"\n\n";
+    csv+="ENTRADAS\nFecha,Categoria,Insumo,Cantidad,Costo,Proveedor,Responsable,Nota\n";
+    csv+=entF.map(function(r){return r.fecha+',"'+(r.cat||"")+'","'+r.n+'",'+r.cantidad+","+(r.costo||0)+',"'+(r.proveedor||"")+'","'+(r.resp||"")+'","'+(r.nota||"")+'"';}).join("\n");
+    csv+="\n\nSALIDAS\nFecha,Tipo,Categoria,Producto/Insumo,Cantidad,Motivo,Responsable,Nota,Insumos\n";
+    csv+=salF.map(function(r){var des=(r.desglose&&r.desglose.length)?r.desglose.join("|"):"";return r.fecha+","+(r.tipo||"")+',"'+(r.cat||"")+'","'+r.n+'",'+r.cantidad+',"'+r.motivo+'",'+(r.resp||"")+',"'+(r.nota||"")+'","'+des+'"';}).join("\n");
+    csv+="\n\nSTOCK FINAL\nID,Categoria,Insumo,Unidad,Stock,Minimo,Costo,Estado\n";
+    csv+=INS.slice().sort(function(a,b){return CORD.indexOf(a.cat)-CORD.indexOf(b.cat);}).map(function(r){var e=r.s<=0?"Agotado":r.s<r.min?"Bajo":"OK";return r.id+',"'+r.cat+'","'+r.n+'",'+r.u+","+r.s+","+r.min+","+(r.c||0)+","+e;}).join("\n");
+  }
+  var blob=new Blob([BOM+csv],{type:"text/csv;charset=utf-8;"});
+  var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fn;a.click();URL.revokeObjectURL(a.href);
+  toast("Descargando "+fn);
+}
+
+// ── INICIO ────────────────────────────────────────────────────────────────────
+poblarSelects();
+renderMenu();
+actualizarBadgeStock();
+</script>
+</body>
+</html>
